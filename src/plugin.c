@@ -91,6 +91,7 @@ int ts3plugin_init() {
     ts3Functions.getConfigPath(configPath, PATH_BUFSIZE);
 	ts3Functions.getPluginPath(pluginPath, PATH_BUFSIZE, pluginID);
 
+	printf("Hello World!");
 	printf("PLUGIN: App path: %s\nResources path: %s\nConfig path: %s\nPlugin path: %s\n", appPath, resourcesPath, configPath, pluginPath);
 
     return 0;  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
@@ -766,31 +767,39 @@ void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID, const char* s
 }
 
 int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetMode, anyID toID, anyID fromID, const char* fromName, const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
-    printf("PLUGIN: onTextMessageEvent %llu %d %d %s %s %d\n", (long long unsigned int)serverConnectionHandlerID, targetMode, fromID, fromName, message, ffIgnored);
-
 	/* Friend/Foe manager has ignored the message, so ignore here as well. */
 	if(ffIgnored) {
 		return 0; /* Client will ignore the message anyways, so return value here doesn't matter */
+	
 	}
 
-#if 0
-	{
-		/* Example code: Autoreply to sender */
-		/* Disabled because quite annoying, but should give you some ideas what is possible here */
-		/* Careful, when two clients use this, they will get banned quickly... */
-		anyID myID;
-		if(ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok) {
-			ts3Functions.logMessage("Error querying own client id", LogLevel_ERROR, "Plugin", serverConnectionHandlerID);
-			return 0;
-		}
-		if(fromID != myID) {  /* Don't reply when source is own client */
-			if(ts3Functions.requestSendPrivateTextMsg(serverConnectionHandlerID, "Text message back!", fromID, NULL) != ERROR_ok) {
-				ts3Functions.logMessage("Error requesting send text message", LogLevel_ERROR, "Plugin", serverConnectionHandlerID);
-			}
-		}
-	}
-#endif
+	// variables for notify-send
+	const char* command = "notify-send";
+	const char* summary = "Message Received";
+	const char* app = "Teamspeak 3";
+	
+	char notify[strlen(command) + 1 + strlen(summary) + strlen(" -a ") + 
+		strlen(app) + 1 + strlen(fromName) + strlen(": ") + strlen(message) + 7]; // 7 from "'s and 1 extra for what?
 
+	snprintf(notify, sizeof notify, "%s \"%s\" -a \"%s\" \"%s: %s\"", command, summary,
+			app, fromName, message);
+
+
+	printf("\n%s\n", notify);
+	system(notify);
+
+	/*const char* command = "notify-send Message Received ";
+	const char* appName = " -a Teamspeak 3 ";
+	char notify[strlen(command) + strlen(fromName) + strlen(appName) + 
+		strlen(message)];
+
+	strcpy(notify, command);
+	strcat(notify, fromName);
+	strcat(notify, appName);
+	strcat(notify, message);
+
+	system(notify);
+*/
     return 0;  /* 0 = handle normally, 1 = client will ignore the text message */
 }
 
