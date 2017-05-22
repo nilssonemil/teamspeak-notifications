@@ -323,18 +323,6 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
 	printf("\n%s\n", notify);
 	system(notify);
 
-	/*const char* command = "notify-send Message Received ";
-	const char* appName = " -a Teamspeak 3 ";
-	char notify[strlen(command) + strlen(fromName) + strlen(appName) + 
-		strlen(message)];
-
-	strcpy(notify, command);
-	strcat(notify, fromName);
-	strcat(notify, appName);
-	strcat(notify, message);
-
-	system(notify);
-*/
     return 0;  /* 0 = handle normally, 1 = client will ignore the text message */
 }
 
