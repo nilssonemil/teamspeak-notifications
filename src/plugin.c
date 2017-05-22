@@ -43,12 +43,12 @@ static char* pluginID = NULL;
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name() {
-	return "Test Plugin";
+	return "teamspeak-notifications";
 }
 
 /* Plugin version */
 const char* ts3plugin_version() {
-    return "1.2";
+    return "0.1.0";
 }
 
 /* Plugin API version. Must be the same as the clients API major version, else the plugin fails to load. */
@@ -58,14 +58,12 @@ int ts3plugin_apiVersion() {
 
 /* Plugin author */
 const char* ts3plugin_author() {
-	/* If you want to use wchar_t, see ts3plugin_name() on how to use */
-    return "TeamSpeak Systems GmbH";
+    return "Emil Nilsson <emil.nilsson@protonmail.com>";
 }
 
 /* Plugin description */
 const char* ts3plugin_description() {
-	/* If you want to use wchar_t, see ts3plugin_name() on how to use */
-    return "This plugin demonstrates the TeamSpeak 3 client plugin architecture.";
+    return "This plugin sends notifications on teamspeak events via libnotify.";
 }
 
 /* Set TeamSpeak 3 callback functions */
