@@ -6,4 +6,4 @@
  * Takes the arguments summary and body that will be passed to
  * notify-send as summary and body respectively.
  */
-void send_notification(const char* summary, const char* body);
+void send_notification(const char* summary, const char* body, int priority);

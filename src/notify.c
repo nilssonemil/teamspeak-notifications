@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-void send_notification(const char* summary, const char* body) 
+void send_notification(const char* summary, const char* body, int priority)
 {
 	// app constants for notify-send
 	// TODO: move these to header file
