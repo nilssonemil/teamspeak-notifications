@@ -1,6 +1,12 @@
 # teamspeak-notifications
 ### TeamSpeak 3 plugin for displaying notifications on events
 
+## Features
+[x] Send notification alerts on messages received.
+[ ] Send notification alters on users joining/leaving channel.
+[ ] Send information that can be used to setup display of active/muted microphone.
+[ ] Send notification on edited channel.
+
 ## Requirements
 libnotify
 
