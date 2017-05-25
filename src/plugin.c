@@ -308,6 +308,12 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
 	
 	}
 
+	anyID myID;
+    if((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok) && fromID == myID) {
+		// do not send notifications on own messages
+        return 0;
+    }
+
 	// variables for notify-send
 	const char* command = "notify-send";
 	const char* summary = "Message Received";
