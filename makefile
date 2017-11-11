@@ -1,8 +1,10 @@
 PLUGIN = teamspeak-notifications.so
 CC = gcc
 CFLAGS = -c -O2 -Wall -fPIC -DLINUX -I include
+TS3PLUGINS = $(HOME)/.ts3client/plugins/
 
 all: $(PLUGIN)
+	cp bin/$(PLUGIN) $(TS3PLUGINS)
 
 $(PLUGIN): plugin.o notify.o
 	$(CC) -o bin/$(PLUGIN) -shared build/plugin.o build/notify.o
