@@ -15,5 +15,7 @@
 libnotify
 
 ## Installation
-Compile the plugin using `make all` and place the resulting `teamspeak-notifications.so` from the directory `bin/` in your plugins directory (`$HOME/.ts3client/plugins`).
+Compile the plugin using `make all`.
+This will place the resulting *teamspeak-notifications.so* inside the 
+`$HOME/.ts3client/plugins` directory.
 You may have to reload TeamSpeak in order for it to be loaded.
