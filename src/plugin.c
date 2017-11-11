@@ -315,20 +315,20 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
         return 0;
     }
 
-	// variables for notify-send
-	const char* command = "notify-send";
-	const char* summary = "Message Received";
-	const char* app = "Teamspeak 3";
-	
-	char notify[strlen(command) + 1 + strlen(summary) + strlen(" -a ") + 
-		strlen(app) + 1 + strlen(fromName) + strlen(": ") + strlen(message) + 7]; // 7 from "'s and 1 extra for what?
-
-	snprintf(notify, sizeof notify, "%s \"%s\" -a \"%s\" \"%s: %s\"", command, summary,
-			app, fromName, message);
-
-
-	printf("\n%s\n", notify);
-	system(notify);
+	if (targetMode == TextMessageTarget_SERVER)
+	{
+		// TODO: Get server name from target.
+		notify_server_message("SERVER", fromName, message);
+	}
+	else if (targetMode == TextMessageTarget_CHANNEL)
+	{
+		// TODO: Get channel name from target.
+		notify_channel_message("CHANNEL", fromName, message);
+	}
+	else if (targetMode == TextMessageTarget_CLIENT)
+	{
+		notify_private_message(fromName, message);
+	}
 
     return 0;  /* 0 = handle normally, 1 = client will ignore the text message */
 }
