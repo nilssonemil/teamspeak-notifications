@@ -6,7 +6,7 @@
 static const char* COMMAND_NOTIFY = "notify-send";
 static const char* APP_NAME = "TeaamSpeak 3";
 
-void notify(const char *summary, const char *body, int urgency_level)
+void notify(const char *summary, const char *body, urgency_t urgency)
 {
 	int extra = 15; // for use of spaces/formattign
 	char notify[strlen(COMMAND_NOTIFY) + strlen(summary) + strlen(APP_NAME) + 
@@ -31,7 +31,7 @@ void notify_server_message(const char *server, const char *sender,
 	strcat(body, separator);
 	strcat(body, message);
 
-	notify(summary, body, 0);
+	notify(summary, body, LOW);
 }
 
 void notify_channel_message(const char *channel, const char *sender,
@@ -48,7 +48,7 @@ void notify_channel_message(const char *channel, const char *sender,
 	strcat(body, separator);
 	strcat(body, message);
 
-	notify(summary, body, 0);
+	notify(summary, body, LOW);
 }
 
 void notify_private_message(const char *sender, const char *message)
@@ -60,6 +60,6 @@ void notify_private_message(const char *sender, const char *message)
 	strcat(body, separator);
 	strcat(body, message);
 
-	notify(summary, body, 1);
+	notify(summary, body, NORMAL);
 }
 
