@@ -15,6 +15,7 @@
 #include "teamspeak/clientlib_publicdefinitions.h"
 #include "ts3_functions.h"
 #include "plugin.h"
+#include "notify.h"
 
 static struct TS3Functions ts3Functions;
 
