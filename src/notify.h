@@ -1,6 +1,8 @@
 #ifndef NOTIFY_H
 #define NOTIFY_H
 
+static const char* COMMAND_NOTIFY = "notify-send";
+static const char* APP_NAME = "TeaamSpeak 3";
 
 /**
  * Sends a notification to user using libnotify's notify-send.
