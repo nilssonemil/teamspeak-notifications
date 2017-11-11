@@ -2,12 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <xdo.h>
 
 static const char* COMMAND_NOTIFY = "notify-send";
 static const char* APP_NAME = "TeaamSpeak 3";
 
+int teamspeak_focused()
+{
+	pid_t ts_pid = getppid();
+
+	/*
+	 * Create a new xdo_t instance for the display specified by the environment
+	 * variable DISPLAY.
+	 * http://www.semicomplete.com/files/xdotool/docs/html/xdo_8h.html#af5792fe8af4caafe90c44883d664eb1d
+	 */
+	const xdo_t *xdo = xdo_new(NULL);
+
+	/**
+	 * Get the window currently in focus, and fetch it's pid.
+	 * http://www.semicomplete.com/files/xdotool/docs/html/xdo_8h.html#a531f14b0231f53eabd31e56801935512
+	 */
+	Window window;
+	xdo_get_focused_window(xdo, &window);
+	pid_t focus = (pid_t)xdo_get_pid_window(xdo, window);
+	
+	return focus == ts_pid;
+}
+
 void notify(const char *summary, const char *body, urgency_t urgency)
 {
+	// do not display notifcation if teamspeak is focused
+	if (teamspeak_focused() == 1)
+		return;
+
 	int extra = 15; // for use of spaces/formattign
 	char notify[strlen(COMMAND_NOTIFY) + strlen(summary) + strlen(APP_NAME) + 
 		strlen(body) + extra];
