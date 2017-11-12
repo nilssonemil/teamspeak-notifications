@@ -345,11 +345,11 @@ int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
   /**
    * Only poke if the poker is not the client itself.
    */
-    anyID myID;
+  anyID myID;
   if (!current_client(serverConnectionHandlerID, fromClientID, &myID))
     notify_poke(pokerName, message);
 
-    return 0;
+  return 0;
 }
 
 void ts3plugin_onFileListEvent(uint64 serverConnectionHandlerID,
