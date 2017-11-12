@@ -1,7 +1,7 @@
 # teamspeak-notifications
 TeamSpeak 3 plugin for displaying notifications on Linux upon TeamSpeak events.
 
-**Version:** 0.3.1
+**Version:** 0.4.0
 
 ## Features
 [x] Send notification alerts on messages received.
