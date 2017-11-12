@@ -10,7 +10,10 @@ static const char* APP_NAME = "TeaamSpeak 3";
 
 int teamspeak_focused()
 {
-	pid_t ts_pid = getppid();
+	/**
+	 * See man getpid.
+	 */
+	pid_t ts_pid = getpid();
 
 	/*
 	 * Create a new xdo_t instance for the display specified by the environment
