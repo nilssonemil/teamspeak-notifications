@@ -45,6 +45,7 @@ void notify(const char *summary, const char *body, urgency_t urgency)
 
 	snprintf(notify, sizeof notify, "%s \"%s\" -a \"%s\" \"%s\"",
 			COMMAND_NOTIFY, summary, APP_NAME, body);
+	printf("DEBUG: %s\n", notify);
 	system(notify);
 }
 
