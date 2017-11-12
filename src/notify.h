@@ -19,6 +19,10 @@ void notify_channel_message(const char *channel, const char *sender,
 
 void notify_private_message(const char *sender, const char *message);
 
+void notify_join(const char *client);
+
+void notify_leave(const char *client);
+
 
 #endif
 

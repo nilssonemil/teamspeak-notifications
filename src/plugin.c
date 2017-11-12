@@ -158,8 +158,35 @@ void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID, uint
 void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clientID, anyID invokerID, const char* invokerName, const char* invokerUniqueIdentifier) {
 }
 
-void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* moveMessage) {
-	// NOTE: Client moved
+void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+		int visibility, const char* moveMessage) {
+	anyID myID;
+	if ((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok)
+			&& clientID == myID)
+	{
+		// ignore if the move is from yourself
+		return;
+	}
+
+	uint64 currentID;
+	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
+				&currentID) != ERROR_ok)
+		return;
+
+	char *clientName;
+	if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
+				clientID, CLIENT_NICKNAME, &clientName) != ERROR_ok)
+		return;
+
+	if (currentID == oldChannelID)
+	{
+		notify_leave(clientName);
+	}
+	else if (currentID == newChannelID)
+	{
+		notify_join(clientName);
+	}
 }
 
 void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* timeoutMessage) {

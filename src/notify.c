@@ -80,3 +80,13 @@ void notify_private_message(const char *sender, const char *message)
 	notify(sender, message, NORMAL);
 }
 
+void notify_join(const char *client)
+{
+	notify(client, "Joined the channel.", NORMAL);
+}
+
+void notify_leave(const char *client)
+{
+	notify(client, "Left the channel.", NORMAL);
+}
+
