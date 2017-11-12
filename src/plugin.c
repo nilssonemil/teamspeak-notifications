@@ -151,9 +151,9 @@ void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
    */
   anyID myID;
   uint64 currentID;
-  if (!current_client(serverConnectionHandlerID, invokerID, &myID) ||
+  if (current_client(serverConnectionHandlerID, invokerID, &myID) != 1 ||
       (current_channel(serverConnectionHandlerID, channelID,
-               &currentID)))
+               &currentID) == 1))
     notify_channel_edited(invokerName);
 }
 
@@ -174,7 +174,7 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
    * client's current one and the client is not the moving client.
    */
   anyID myID;
-  if (!current_client(serverConnectionHandlerID, clientID, &myID))
+  if (current_client(serverConnectionHandlerID, clientID, &myID) != 1)
   {
     char *clientName;
     if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
@@ -182,11 +182,11 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
     {
       uint64 currentID;
       if (current_channel(serverConnectionHandlerID, oldChannelID,
-            &currentID))
         notify_leave(clientName);
+            &currentID) == 1)
       if (current_channel(serverConnectionHandlerID, newChannelID,
-            &currentID))
         notify_join(clientName);
+            &currentID) == 1)
     }
     else
       ts3Functions.logMessage("Could not get client nickname.",
@@ -308,7 +308,7 @@ int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
    * Only poke if the poker is not the client itself.
    */
   anyID myID;
-  if (!current_client(serverConnectionHandlerID, fromClientID, &myID))
+  if (current_client(serverConnectionHandlerID, fromClientID, &myID) != 1)
     notify_poke(pokerName, message);
 
   return 0;
