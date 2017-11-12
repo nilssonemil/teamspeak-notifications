@@ -17,6 +17,7 @@ TeamSpeak 3 plugin for displaying notifications on Linux upon TeamSpeak events.
 microphone.
 [ ] Show TeamSpeak 3 icon with notification. 
 [ ] Read config of which notification should be displayed from file.
+[ ] Send message from outside of teamspeak.
 
 ## Requirements
 In order for the plugin to work you will have to have following libaries
