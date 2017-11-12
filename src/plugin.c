@@ -252,8 +252,7 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
         char *servername;
         if (ts3Functions.getServerVariableAsString(
               serverConnectionHandlerID, VIRTUALSERVER_NAME,
-              &servername)
-            == ERROR_ok)
+              &servername) == ERROR_ok)
         {
           notify_server_message(servername, fromName, message);
           ts3Functions.freeMemory(servername);
