@@ -212,14 +212,18 @@ int ts3plugin_onServerErrorEvent(uint64 serverConnectionHandlerID, const char* e
 void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID, const char* shutdownMessage) {
 }
 
-int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetMode, anyID toID, anyID fromID, const char* fromName, const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
+int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
+		anyID targetMode, anyID toID, anyID fromID, const char* fromName,
+		const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
 	/* Friend/Foe manager has ignored the message, so ignore here as well. */
-	if(ffIgnored) {
-		return 0; /* Client will ignore the message anyways, so return value here doesn't matter */
+	if (ffIgnored) {
+		// client will ignore message no matter what, rv does not matter
+		return 0;
 	}
 
 	anyID myID;
-    if((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok) && fromID == myID) {
+    if ((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok)
+			&& fromID == myID) {
 		// do not send notifications on own messages
         return 0;
     }
