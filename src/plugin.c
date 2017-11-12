@@ -243,7 +243,7 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
    * Do NOT send message if the sender is the client itself.
    */
   anyID myID;
-  if (current_client(serverConnectionHandlerID, fromID, &myID))
+  if (!current_client(serverConnectionHandlerID, fromID, &myID))
   {
     switch(targetMode)
     {
