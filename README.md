@@ -16,11 +16,14 @@
 [ ] Read config of which notification should be displayed from file.
 
 ## Requirements
+In order for the plugin to work you will have to have following libs installed:
+
 - libnotify
 - libxdo
 
 ## Installation
-Compile the plugin using `make all`.
+Compile the plugin using `make install`.
 This will place the resulting *teamspeak-notifications.so* inside the 
 `$HOME/.ts3client/plugins` directory.
 You may have to reload TeamSpeak in order for it to be loaded.
+
