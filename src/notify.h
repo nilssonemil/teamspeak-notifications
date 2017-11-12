@@ -26,6 +26,8 @@ void notify_join(const char *client);
 
 void notify_leave(const char *client);
 
+void notify_poke(const char *poker, const char *message);
+
 
 #endif
 
