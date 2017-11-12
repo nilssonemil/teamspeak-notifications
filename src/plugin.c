@@ -123,15 +123,34 @@ void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID,
 	// TODO: Connection lost? Notify!
 }
 
-void ts3plugin_onUpdateChannelEvent(uint64 serverConnectionHandlerID,
-		uint64 channelID) {
-	// TODO: Notify channel edited, sync with below func
-}
-
 void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
 		uint64 channelID, anyID invokerID, const char* invokerName,
 		const char* invokerUniqueIdentifier) {
-	// TODO: Notify channel edited, sync with above func
+	ts3Functions.logMessage("onUpdateChannelEditedEvent", LogLevel_DEBUG,
+			ts3plugin_name(), serverConnectionHandlerID);
+
+	anyID myID;
+	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
+	{
+		ts3Functions.logMessage("Error querying own client ID.", LogLevel_ERROR,
+				ts3plugin_name(), serverConnectionHandlerID);
+		return;
+	}
+
+	uint64 currentID;
+	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
+				&currentID) != ERROR_ok)
+	{
+		ts3Functions.logMessage("Error querying own client's channel.",
+				LogLevel_ERROR, ts3plugin_name(), serverConnectionHandlerID);
+		return;
+	}
+
+	// Do not show notification if the client was the one to edit.
+	if (channelID == currentID)
+	{
+		notify_channel_edited(invokerName);
+	}
 }
 
 void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID,
