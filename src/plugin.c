@@ -1,8 +1,3 @@
-/*
- * TeamSpeak 3 demo plugin
- *
- * Copyright (c) 2008-2017 TeamSpeak Systems GmbH
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

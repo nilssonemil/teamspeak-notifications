@@ -1,9 +1,3 @@
-/*
- * TeamSpeak 3 demo plugin
- *
- * Copyright (c) 2008-2017 TeamSpeak Systems GmbH
- */
-
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
