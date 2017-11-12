@@ -118,17 +118,26 @@ int ts3plugin_requestAutoload() {
 
 /* Clientlib */
 
-void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID, int newStatus, unsigned int errorNumber) {
-	// TODO: Keep track of lost connection?
+void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID,
+		int newStatus, unsigned int errorNumber) {
+	// TODO: Connection lost? Notify!
 }
 
-void ts3plugin_onUpdateChannelEvent(uint64 serverConnectionHandlerID, uint64 channelID) {
+void ts3plugin_onUpdateChannelEvent(uint64 serverConnectionHandlerID,
+		uint64 channelID) {
+	// TODO: Notify channel edited, sync with below func
 }
 
-void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID, uint64 channelID, anyID invokerID, const char* invokerName, const char* invokerUniqueIdentifier) {
+void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
+		uint64 channelID, anyID invokerID, const char* invokerName,
+		const char* invokerUniqueIdentifier) {
+	// TODO: Notify channel edited, sync with above func
 }
 
-void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clientID, anyID invokerID, const char* invokerName, const char* invokerUniqueIdentifier) {
+void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, anyID invokerID, const char* invokerName,
+		const char* invokerUniqueIdentifier) {
+	// TODO: Client updated? Notify!
 }
 
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
@@ -162,27 +171,36 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
 	}
 }
 
-void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* timeoutMessage) {
-	// NOTE: Client lost connection
+void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+		int visibility, const char* timeoutMessage) {
+	// TODO: Client connection lost? Notify!
 }
 
-void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID moverID, const char* moverName, const char* moverUniqueIdentifier, const char* moveMessage) {
-	// NOTE: Client was moved
+void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+		int visibility, anyID moverID, const char* moverName,
+		const char* moverUniqueIdentifier, const char* moveMessage) {
+	// TODO: Client was moved, notify!
 }
 
-void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, const char* kickMessage) {
-	// NOTE: Client was kicked from channel
+void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility,
+		anyID kickerID, const char* kickerName,
+		const char* kickerUniqueIdentifier, const char* kickMessage) {
+	// TODO: Client kicked from channel, notify!
 }
 
-void ts3plugin_onClientKickFromServerEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, const char* kickMessage) {
-	// NOTE: Client was kicked from server
+void ts3plugin_onClientKickFromServerEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+		int visibility, anyID kickerID, const char* kickerName,
+		const char* kickerUniqueIdentifier, const char* kickMessage) {
+	// TODO: Client kicked from server, notify!
 }
 
-int ts3plugin_onServerErrorEvent(uint64 serverConnectionHandlerID, const char* errorMessage, unsigned int error, const char* returnCode, const char* extraMessage) {
-	return 0;  /* If no plugin return code was used, the return value of this function is ignored */
-}
-
-void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID, const char* shutdownMessage) {
+void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID,
+		const char* shutdownMessage) {
+	// TODO: Server shutdown, notify!
 }
 
 int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
@@ -233,31 +251,37 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
     return 0; /* 0 = handle normally, 1 = client will ignore the text message */
 }
 
-void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID, int status, int isReceivedWhisper, anyID clientID) {
-	/* Demonstrate usage of getClientDisplayName */
-	char name[512];
-	if(ts3Functions.getClientDisplayName(serverConnectionHandlerID, clientID, name, 512) == ERROR_ok) {
-		if(status == STATUS_TALKING) {
-			//printf("--> %s starts talking\n", name);
-		} else {
-			//printf("--> %s stops talking\n", name);
-		}
-	}
+void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID,
+		int status, int isReceivedWhisper, anyID clientID) {
+	// NOTE: This could potentially be used to make an overlay for who's
+	// currently talking, or display a lamp in status bar e.g.
 }
 
 
-void ts3plugin_onChannelDescriptionUpdateEvent(uint64 serverConnectionHandlerID, uint64 channelID) {
+void ts3plugin_onChannelDescriptionUpdateEvent(uint64 serverConnectionHandlerID,
+		uint64 channelID) {
+	// TODO: Channel description updated, notify
 }
 
-void ts3plugin_onChannelPasswordChangedEvent(uint64 serverConnectionHandlerID, uint64 channelID) {
+void ts3plugin_onChannelPasswordChangedEvent(uint64 serverConnectionHandlerID,
+		uint64 channelID) {
+	// TODO: Password changed, notify!
 }
 
 /* Clientlib rare */
 
-void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, uint64 time, const char* kickMessage) {
+void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+		int visibility, anyID kickerID, const char* kickerName,
+		const char* kickerUniqueIdentifier, uint64 time,
+		const char* kickMessage) {
+	// TODO: Client banned from server, notify!
 }
 
-int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID, anyID fromClientID, const char* pokerName, const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
+int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
+		anyID fromClientID, const char* pokerName,
+		const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
+	// TODO: Implement
     anyID myID;
 
     printf("PLUGIN onClientPokeEvent: %llu %d %s %s %d\n", (long long unsigned int)serverConnectionHandlerID, fromClientID, pokerName, message, ffIgnored);
@@ -281,22 +305,45 @@ int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID, anyID fromClie
     return 0;  /* 0 = handle normally, 1 = client will ignore the poke */
 }
 
-void ts3plugin_onFileListEvent(uint64 serverConnectionHandlerID, uint64 channelID, const char* path, const char* name, uint64 size, uint64 datetime, int type, uint64 incompletesize, const char* returnCode) {
+void ts3plugin_onFileListEvent(uint64 serverConnectionHandlerID,
+		uint64 channelID, const char* path, const char* name, uint64 size,
+		uint64 datetime, int type, uint64 incompletesize,
+		const char* returnCode) {
+	// TODO: find out what this does ...
 }
 
-void ts3plugin_onClientChannelGroupChangedEvent(uint64 serverConnectionHandlerID, uint64 channelGroupID, uint64 channelID, anyID clientID, anyID invokerClientID, const char* invokerName, const char* invokerUniqueIdentity) {
+void ts3plugin_onClientChannelGroupChangedEvent(
+		uint64 serverConnectionHandlerID, uint64 channelGroupID,
+		uint64 channelID, anyID clientID, anyID invokerClientID,
+		const char* invokerName, const char* invokerUniqueIdentity) {
+	// TODO: Channel group changed? Notify!
 }
 
-void ts3plugin_onServerGroupClientAddedEvent(uint64 serverConnectionHandlerID, anyID clientID, const char* clientName, const char* clientUniqueIdentity, uint64 serverGroupID, anyID invokerClientID, const char* invokerName, const char* invokerUniqueIdentity) {
+void ts3plugin_onServerGroupClientAddedEvent(uint64 serverConnectionHandlerID, 
+		anyID clientID, const char* clientName,
+		const char* clientUniqueIdentity, uint64 serverGroupID,
+		anyID invokerClientID, const char* invokerName,
+		const char* invokerUniqueIdentity) {
+	// TODO: Added to server group? Notify!
 }
 
-void ts3plugin_onServerGroupClientDeletedEvent(uint64 serverConnectionHandlerID, anyID clientID, const char* clientName, const char* clientUniqueIdentity, uint64 serverGroupID, anyID invokerClientID, const char* invokerName, const char* invokerUniqueIdentity) {
+void ts3plugin_onServerGroupClientDeletedEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, const char* clientName,
+		const char* clientUniqueIdentity, uint64 serverGroupID,
+		anyID invokerClientID, const char* invokerName,
+		const char* invokerUniqueIdentity) {
+	// TODO: Removed from server group? Notify!
 }
 
-void ts3plugin_onClientChatClosedEvent(uint64 serverConnectionHandlerID, anyID clientID, const char* clientUniqueIdentity) {
+void ts3plugin_onClientChatClosedEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, const char* clientUniqueIdentity) {
+	// TODO: Client closed chat, notify?
 }
 
-void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID, anyID clientID, const char* clientUniqueIdentity) {
+void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID,
+		anyID clientID, const char* clientUniqueIdentity) {
+	// NOTE: What does this mean? Client writing message? Could show
+	// symbol in status bar?
 }
 
 /* Client UI callbacks */
