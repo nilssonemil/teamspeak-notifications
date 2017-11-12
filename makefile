@@ -3,6 +3,8 @@ CC = gcc
 CFLAGS = -c -O2 -Wall -fPIC -DLINUX -I include
 TS3PLUGINS = $(HOME)/.ts3client/plugins/
 
+default: all clean
+
 all: $(PLUGIN)
 	cp bin/$(PLUGIN) $(TS3PLUGINS)
 
