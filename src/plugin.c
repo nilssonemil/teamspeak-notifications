@@ -39,14 +39,14 @@ static char* pluginID = NULL;
  * Will return -1 if an error occured.
  */
 int current_client(uint64 serverConnectionHandlerID, anyID other,
-		anyID *client);
+    anyID *client);
 
 /**
  * Return 1 if the channel is the user's current channel, otherwise 0.
  * Will return -1 if an error occured.
  */
 int current_channel(uint64 serverConnectionHandlerID, uint64 other,
-		uint64 *current);
+    uint64 *current);
 
 /*********************************** Required functions ************************************/
 /*
@@ -55,7 +55,7 @@ int current_channel(uint64 serverConnectionHandlerID, uint64 other,
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name() {
-	return "teamspeak-notifications";
+  return "teamspeak-notifications";
 }
 
 /* Plugin version */
@@ -65,7 +65,7 @@ const char* ts3plugin_version() {
 
 /* Plugin API version. Must be the same as the clients API major version, else the plugin fails to load. */
 int ts3plugin_apiVersion() {
-	return PLUGIN_API_VERSION;
+  return PLUGIN_API_VERSION;
 }
 
 /* Plugin author */
@@ -88,27 +88,27 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs) {
  * If the function returns 1 on failure, the plugin will be unloaded again.
  */
 int ts3plugin_init() {
-	notify(ts3plugin_name(), "Hello, World!", 0);
+  notify(ts3plugin_name(), "Hello, World!", 0);
     return 0;
-	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
-	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
-	 * the plugin again, avoiding the show another dialog by the client telling the user the plugin failed to load.
-	 * For normal case, if a plugin really failed to load because of an error, the correct return value is 1. */
+  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
+  /* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
+   * the plugin again, avoiding the show another dialog by the client telling the user the plugin failed to load.
+   * For normal case, if a plugin really failed to load because of an error, the correct return value is 1. */
 }
 
 /* Custom code called right before the plugin is unloaded */
 void ts3plugin_shutdown() {
-	/*
-	 * Note:
-	 * If your plugin implements a settings dialog, it must be closed and deleted here, else the
-	 * TeamSpeak client will most likely crash (DLL removed but dialog from DLL code still open).
-	 */
+  /*
+   * Note:
+   * If your plugin implements a settings dialog, it must be closed and deleted here, else the
+   * TeamSpeak client will most likely crash (DLL removed but dialog from DLL code still open).
+   */
 
-	/* Free pluginID if we registered it */
-	if(pluginID) {
-		free(pluginID);
-		pluginID = NULL;
-	}
+  /* Free pluginID if we registered it */
+  if(pluginID) {
+    free(pluginID);
+    pluginID = NULL;
+  }
 }
 
 /**************************** Optional functions ******************************/
@@ -123,8 +123,8 @@ void ts3plugin_shutdown() {
  * This function is optional. If missing, no autoload is assumed.
  */
 int ts3plugin_requestAutoload() {
-	/* 1 = request autoloaded, 0 = do not request autoload */
-	return 1;
+  /* 1 = request autoloaded, 0 = do not request autoload */
+  return 1;
 }
 
 /************************** TeamSpeak callbacks ***************************/
@@ -136,262 +136,262 @@ int ts3plugin_requestAutoload() {
 /* Clientlib */
 
 void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID,
-		int newStatus, unsigned int errorNumber) {
-	// TODO: Connection lost? Notify!
+    int newStatus, unsigned int errorNumber) {
+  // TODO: Connection lost? Notify!
 }
 
 void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
-		uint64 channelID, anyID invokerID, const char* invokerName,
-		const char* invokerUniqueIdentifier) {
-	ts3Functions.logMessage("onUpdateChannelEditedEvent", LogLevel_DEBUG,
-			ts3plugin_name(), serverConnectionHandlerID);
+    uint64 channelID, anyID invokerID, const char* invokerName,
+    const char* invokerUniqueIdentifier) {
+  ts3Functions.logMessage("onUpdateChannelEditedEvent", LogLevel_DEBUG,
+      ts3plugin_name(), serverConnectionHandlerID);
 
-	/**
-	 * Do not show notification if the client edited the channel itself or
-	 * if the channel edited is not the one the client resides in.
-	 */
-	anyID myID;
-	uint64 currentID;
-	if (!current_client(serverConnectionHandlerID, invokerID, &myID) ||
-			(current_channel(serverConnectionHandlerID, channelID,
-							 &currentID)))
-		notify_channel_edited(invokerName);
+  /**
+   * Do not show notification if the client edited the channel itself or
+   * if the channel edited is not the one the client resides in.
+   */
+  anyID myID;
+  uint64 currentID;
+  if (!current_client(serverConnectionHandlerID, invokerID, &myID) ||
+      (current_channel(serverConnectionHandlerID, channelID,
+               &currentID)))
+    notify_channel_edited(invokerName);
 }
 
 void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, anyID invokerID, const char* invokerName,
-		const char* invokerUniqueIdentifier) {
-	// TODO: Client updated? Notify!
+    anyID clientID, anyID invokerID, const char* invokerName,
+    const char* invokerUniqueIdentifier) {
+  // TODO: Client updated? Notify!
 }
 
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
-		int visibility, const char* moveMessage) {
-	ts3Functions.logMessage("onClientMoveEvent", LogLevel_DEBUG,
-			ts3plugin_name(), serverConnectionHandlerID);
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+    int visibility, const char* moveMessage) {
+  ts3Functions.logMessage("onClientMoveEvent", LogLevel_DEBUG,
+      ts3plugin_name(), serverConnectionHandlerID);
 
-	/**
-	 * Send notifications that client left/joined channel if the channel is the
-	 * client's current one and the client is not the moving client.
-	 */
-	anyID myID;
-	if (!current_client(serverConnectionHandlerID, clientID, &myID))
-	{
-		char *clientName;
-		if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
-					clientID, CLIENT_NICKNAME, &clientName) == ERROR_ok)
-		{
-			uint64 currentID;
-			if (current_channel(serverConnectionHandlerID, oldChannelID,
-						&currentID))
-				notify_leave(clientName);
-			if (current_channel(serverConnectionHandlerID, newChannelID,
-						&currentID))
-				notify_join(clientName);
-		}
-		else
-		{
-			ts3Functions.logMessage("Could not get client nickname.",
-					LogLevel_ERROR, ts3plugin_name(),
-					serverConnectionHandlerID);
-		}
-	}
+  /**
+   * Send notifications that client left/joined channel if the channel is the
+   * client's current one and the client is not the moving client.
+   */
+  anyID myID;
+  if (!current_client(serverConnectionHandlerID, clientID, &myID))
+  {
+    char *clientName;
+    if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
+          clientID, CLIENT_NICKNAME, &clientName) == ERROR_ok)
+    {
+      uint64 currentID;
+      if (current_channel(serverConnectionHandlerID, oldChannelID,
+            &currentID))
+        notify_leave(clientName);
+      if (current_channel(serverConnectionHandlerID, newChannelID,
+            &currentID))
+        notify_join(clientName);
+    }
+    else
+    {
+      ts3Functions.logMessage("Could not get client nickname.",
+          LogLevel_ERROR, ts3plugin_name(),
+          serverConnectionHandlerID);
+    }
+  }
 }
 
 void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
-		int visibility, const char* timeoutMessage) {
-	// TODO: Client connection timeout, Notify!
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+    int visibility, const char* timeoutMessage) {
+  // TODO: Client connection timeout, Notify!
 }
 
 void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
-		int visibility, anyID moverID, const char* moverName,
-		const char* moverUniqueIdentifier, const char* moveMessage) {
-	// TODO: Client was moved, notify!
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+    int visibility, anyID moverID, const char* moverName,
+    const char* moverUniqueIdentifier, const char* moveMessage) {
+  // TODO: Client was moved, notify!
 }
 
 void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility,
-		anyID kickerID, const char* kickerName,
-		const char* kickerUniqueIdentifier, const char* kickMessage) {
-	// TODO: Client kicked from channel, notify!
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility,
+    anyID kickerID, const char* kickerName,
+    const char* kickerUniqueIdentifier, const char* kickMessage) {
+  // TODO: Client kicked from channel, notify!
 }
 
 void ts3plugin_onClientKickFromServerEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
-		int visibility, anyID kickerID, const char* kickerName,
-		const char* kickerUniqueIdentifier, const char* kickMessage) {
-	// TODO: Client kicked from server, notify!
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+    int visibility, anyID kickerID, const char* kickerName,
+    const char* kickerUniqueIdentifier, const char* kickMessage) {
+  // TODO: Client kicked from server, notify!
 }
 
 void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID,
-		const char* shutdownMessage) {
-	// TODO: Server shutdown, notify!
+    const char* shutdownMessage) {
+  // TODO: Server shutdown, notify!
 }
 
 int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
-		anyID targetMode, anyID toID, anyID fromID, const char* fromName,
-		const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
-	ts3Functions.logMessage("onTextMessageEvent", LogLevel_DEBUG,
-			ts3plugin_name(), serverConnectionHandlerID);
+    anyID targetMode, anyID toID, anyID fromID, const char* fromName,
+    const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
+  ts3Functions.logMessage("onTextMessageEvent", LogLevel_DEBUG,
+      ts3plugin_name(), serverConnectionHandlerID);
 
-	/* Friend/Foe manager has ignored the message, so ignore here as well. */
-	if (ffIgnored) return 0;
+  /* Friend/Foe manager has ignored the message, so ignore here as well. */
+  if (ffIgnored) return 0;
 
-	/**
-	 * Send notification of server/channel/client message.
-	 * Do NOT send message if the sender is the client itself.
-	 */
-	anyID myID;
-	if (current_client(serverConnectionHandlerID, fromID, &myID))
-	{
-		switch(targetMode)
-		{
-			case TextMessageTarget_SERVER:;
-				char *servername;
-				if (ts3Functions.getServerVariableAsString(
-							serverConnectionHandlerID, VIRTUALSERVER_NAME,
-							&servername)
-						== ERROR_ok)
-				{
-					notify_server_message(servername, fromName, message);
-					ts3Functions.freeMemory(servername);
-				}
-				else
-					ts3Functions.logMessage("Could not get server name.",
-							LogLevel_ERROR, ts3plugin_name(),
-							serverConnectionHandlerID);
-				return 0;
+  /**
+   * Send notification of server/channel/client message.
+   * Do NOT send message if the sender is the client itself.
+   */
+  anyID myID;
+  if (current_client(serverConnectionHandlerID, fromID, &myID))
+  {
+    switch(targetMode)
+    {
+      case TextMessageTarget_SERVER:;
+        char *servername;
+        if (ts3Functions.getServerVariableAsString(
+              serverConnectionHandlerID, VIRTUALSERVER_NAME,
+              &servername)
+            == ERROR_ok)
+        {
+          notify_server_message(servername, fromName, message);
+          ts3Functions.freeMemory(servername);
+        }
+        else
+          ts3Functions.logMessage("Could not get server name.",
+              LogLevel_ERROR, ts3plugin_name(),
+              serverConnectionHandlerID);
+        return 0;
 
-			case TextMessageTarget_CHANNEL:;
-				uint64 channelID;
-				if (ts3Functions.getChannelOfClient(serverConnectionHandlerID,
-							myID, &channelID) == ERROR_ok)
-				{
-					char *channelname;
-					if (ts3Functions.getChannelVariableAsString(
-								serverConnectionHandlerID, channelID,
-								CHANNEL_NAME, &channelname) == ERROR_ok)
-					{
-						notify_channel_message(channelname, fromName, message);
-						ts3Functions.freeMemory(channelname);
-					}
-					else
-						ts3Functions.logMessage("Could not get channel name.",
-								LogLevel_ERROR, ts3plugin_name(),
-								serverConnectionHandlerID);
-				}
-				else
-					ts3Functions.logMessage(
-							"Could not get current channel's ID.",
-							LogLevel_ERROR, ts3plugin_name(),
-							serverConnectionHandlerID);
-				return 0;
-			
-			case TextMessageTarget_CLIENT:;
-				notify_private_message(fromName, message);
-				return 0;
-			
-			default:
-				ts3Functions.logMessage("Unexpected TextMessageTarget.",
-						LogLevel_WARNING, ts3plugin_name(),
-						serverConnectionHandlerID);
-				return 0;
-		}
-	}
+      case TextMessageTarget_CHANNEL:;
+        uint64 channelID;
+        if (ts3Functions.getChannelOfClient(serverConnectionHandlerID,
+              myID, &channelID) == ERROR_ok)
+        {
+          char *channelname;
+          if (ts3Functions.getChannelVariableAsString(
+                serverConnectionHandlerID, channelID,
+                CHANNEL_NAME, &channelname) == ERROR_ok)
+          {
+            notify_channel_message(channelname, fromName, message);
+            ts3Functions.freeMemory(channelname);
+          }
+          else
+            ts3Functions.logMessage("Could not get channel name.",
+                LogLevel_ERROR, ts3plugin_name(),
+                serverConnectionHandlerID);
+        }
+        else
+          ts3Functions.logMessage(
+              "Could not get current channel's ID.",
+              LogLevel_ERROR, ts3plugin_name(),
+              serverConnectionHandlerID);
+        return 0;
+      
+      case TextMessageTarget_CLIENT:;
+        notify_private_message(fromName, message);
+        return 0;
+      
+      default:
+        ts3Functions.logMessage("Unexpected TextMessageTarget.",
+            LogLevel_WARNING, ts3plugin_name(),
+            serverConnectionHandlerID);
+        return 0;
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID,
-		int status, int isReceivedWhisper, anyID clientID) {
-	// NOTE: This could potentially be used to make an overlay for who's
-	// currently talking, or display a lamp in status bar e.g.
+    int status, int isReceivedWhisper, anyID clientID) {
+  // NOTE: This could potentially be used to make an overlay for who's
+  // currently talking, or display a lamp in status bar e.g.
 }
 
 
 void ts3plugin_onChannelDescriptionUpdateEvent(uint64 serverConnectionHandlerID,
-		uint64 channelID) {
-	// TODO: Channel description updated, notify
+    uint64 channelID) {
+  // TODO: Channel description updated, notify
 }
 
 void ts3plugin_onChannelPasswordChangedEvent(uint64 serverConnectionHandlerID,
-		uint64 channelID) {
-	// TODO: Password changed, notify!
+    uint64 channelID) {
+  // TODO: Password changed, notify!
 }
 
 /* Clientlib rare */
 
 void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
-		int visibility, anyID kickerID, const char* kickerName,
-		const char* kickerUniqueIdentifier, uint64 time,
-		const char* kickMessage) {
-	// TODO: Client banned from server, notify!
+    anyID clientID, uint64 oldChannelID, uint64 newChannelID,
+    int visibility, anyID kickerID, const char* kickerName,
+    const char* kickerUniqueIdentifier, uint64 time,
+    const char* kickMessage) {
+  // TODO: Client banned from server, notify!
 }
 
 /**
  * Return 0 when client should handle normally, 1 if client should ignore.
  */
 int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
-		anyID fromClientID, const char* pokerName,
-		const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
-	ts3Functions.logMessage("onClientPokeEvent", LogLevel_DEBUG,
-			ts3plugin_name(), serverConnectionHandlerID);
+    anyID fromClientID, const char* pokerName,
+    const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
+  ts3Functions.logMessage("onClientPokeEvent", LogLevel_DEBUG,
+      ts3plugin_name(), serverConnectionHandlerID);
 
-	// Check if the Friend/Foe manager has already blocked this poke
-	if(ffIgnored) return 0;
+  // Check if the Friend/Foe manager has already blocked this poke
+  if(ffIgnored) return 0;
 
-	/**
-	 * Only poke if the poker is not the client itself.
-	 */
+  /**
+   * Only poke if the poker is not the client itself.
+   */
     anyID myID;
-	if (!current_client(serverConnectionHandlerID, fromClientID, &myID))
-		notify_poke(pokerName, message);
+  if (!current_client(serverConnectionHandlerID, fromClientID, &myID))
+    notify_poke(pokerName, message);
 
     return 0;
 }
 
 void ts3plugin_onFileListEvent(uint64 serverConnectionHandlerID,
-		uint64 channelID, const char* path, const char* name, uint64 size,
-		uint64 datetime, int type, uint64 incompletesize,
-		const char* returnCode) {
-	// TODO: find out what this does ...
+    uint64 channelID, const char* path, const char* name, uint64 size,
+    uint64 datetime, int type, uint64 incompletesize,
+    const char* returnCode) {
+  // TODO: find out what this does ...
 }
 
 void ts3plugin_onClientChannelGroupChangedEvent(
-		uint64 serverConnectionHandlerID, uint64 channelGroupID,
-		uint64 channelID, anyID clientID, anyID invokerClientID,
-		const char* invokerName, const char* invokerUniqueIdentity) {
-	// TODO: Channel group changed? Notify!
+    uint64 serverConnectionHandlerID, uint64 channelGroupID,
+    uint64 channelID, anyID clientID, anyID invokerClientID,
+    const char* invokerName, const char* invokerUniqueIdentity) {
+  // TODO: Channel group changed? Notify!
 }
 
 void ts3plugin_onServerGroupClientAddedEvent(uint64 serverConnectionHandlerID, 
-		anyID clientID, const char* clientName,
-		const char* clientUniqueIdentity, uint64 serverGroupID,
-		anyID invokerClientID, const char* invokerName,
-		const char* invokerUniqueIdentity) {
-	// TODO: Added to server group? Notify!
+    anyID clientID, const char* clientName,
+    const char* clientUniqueIdentity, uint64 serverGroupID,
+    anyID invokerClientID, const char* invokerName,
+    const char* invokerUniqueIdentity) {
+  // TODO: Added to server group? Notify!
 }
 
 void ts3plugin_onServerGroupClientDeletedEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, const char* clientName,
-		const char* clientUniqueIdentity, uint64 serverGroupID,
-		anyID invokerClientID, const char* invokerName,
-		const char* invokerUniqueIdentity) {
-	// TODO: Removed from server group? Notify!
+    anyID clientID, const char* clientName,
+    const char* clientUniqueIdentity, uint64 serverGroupID,
+    anyID invokerClientID, const char* invokerName,
+    const char* invokerUniqueIdentity) {
+  // TODO: Removed from server group? Notify!
 }
 
 void ts3plugin_onClientChatClosedEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, const char* clientUniqueIdentity) {
-	// TODO: Client closed chat, notify?
+    anyID clientID, const char* clientUniqueIdentity) {
+  // TODO: Client closed chat, notify?
 }
 
 void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID,
-		anyID clientID, const char* clientUniqueIdentity) {
-	// NOTE: What does this mean? Client writing message? Could show
-	// symbol in status bar?
+    anyID clientID, const char* clientUniqueIdentity) {
+  // NOTE: What does this mean? Client writing message? Could show
+  // symbol in status bar?
 }
 
 /* Client UI callbacks */
@@ -400,30 +400,30 @@ void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID,
 /*********************************** Local functions *************************/
 
 int current_client(uint64 serverConnectionHandlerID, anyID other,
-		anyID *client)
+    anyID *client)
 {
-	if (ts3Functions.getClientID(serverConnectionHandlerID, client) == ERROR_ok)
-		return other == *client;
+  if (ts3Functions.getClientID(serverConnectionHandlerID, client) == ERROR_ok)
+    return other == *client;
 
-	return -1;
+  return -1;
 }
 
 int current_channel(uint64 serverConnectionHandlerID, uint64 other,
-		uint64 *current)
+    uint64 *current)
 {
-	anyID myID;
-	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
-	{
-		ts3Functions.logMessage("Could not get client ID.", LogLevel_ERROR,
-				ts3plugin_name(), serverConnectionHandlerID);
-		return  -1;
-	}
-	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
-				current) != ERROR_ok)
-	{
-		ts3Functions.logMessage("Could not get client's channel's ID.",
-				LogLevel_DEBUG, ts3plugin_name(), serverConnectionHandlerID);
-		return -1;
-	}
-	return other == *current;
+  anyID myID;
+  if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
+  {
+    ts3Functions.logMessage("Could not get client ID.", LogLevel_ERROR,
+        ts3plugin_name(), serverConnectionHandlerID);
+    return  -1;
+  }
+  if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
+        current) != ERROR_ok)
+  {
+    ts3Functions.logMessage("Could not get client's channel's ID.",
+        LogLevel_DEBUG, ts3plugin_name(), serverConnectionHandlerID);
+    return -1;
+  }
+  return other == *current;
 }
