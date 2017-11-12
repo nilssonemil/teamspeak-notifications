@@ -106,7 +106,8 @@ void ts3plugin_shutdown() {
  * This function is optional. If missing, no autoload is assumed.
  */
 int ts3plugin_requestAutoload() {
-	return 0;  /* 1 = request autoloaded, 0 = do not request autoload */
+	/* 1 = request autoloaded, 0 = do not request autoload */
+	return 1;
 }
 
 /************************** TeamSpeak callbacks ***************************/
