@@ -174,7 +174,7 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
 void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID,
 		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
 		int visibility, const char* timeoutMessage) {
-	// TODO: Client connection lost? Notify!
+	// TODO: Client connection timeout, Notify!
 }
 
 void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID,
