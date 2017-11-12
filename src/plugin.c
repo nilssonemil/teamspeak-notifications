@@ -145,28 +145,16 @@ void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
 	ts3Functions.logMessage("onUpdateChannelEditedEvent", LogLevel_DEBUG,
 			ts3plugin_name(), serverConnectionHandlerID);
 
+	/**
+	 * Do not show notification if the client edited the channel itself or
+	 * if the channel edited is not the one the client resides in.
+	 */
 	anyID myID;
-	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
-	{
-		ts3Functions.logMessage("Error querying own client ID.", LogLevel_ERROR,
-				ts3plugin_name(), serverConnectionHandlerID);
-		return;
-	}
-
 	uint64 currentID;
-	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
-				&currentID) != ERROR_ok)
-	{
-		ts3Functions.logMessage("Error querying own client's channel.",
-				LogLevel_ERROR, ts3plugin_name(), serverConnectionHandlerID);
-		return;
-	}
-
-	// Do not show notification if the client was the one to edit.
-	if (channelID == currentID)
-	{
+	if (!current_client(serverConnectionHandlerID, invokerID, &myID) ||
+			(current_channel(serverConnectionHandlerID, channelID,
+							 &currentID)))
 		notify_channel_edited(invokerName);
-	}
 }
 
 void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID,
@@ -181,31 +169,31 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
 	ts3Functions.logMessage("onClientMoveEvent", LogLevel_DEBUG,
 			ts3plugin_name(), serverConnectionHandlerID);
 
+	/**
+	 * Send notifications that client left/joined channel if the channel is the
+	 * client's current one and the client is not the moving client.
+	 */
 	anyID myID;
-	if ((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok)
-			&& clientID == myID)
+	if (!current_client(serverConnectionHandlerID, clientID, &myID))
 	{
-		// ignore if the move is from yourself
-		return;
-	}
-
-	uint64 currentID;
-	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
-				&currentID) != ERROR_ok)
-		return;
-
-	char *clientName;
-	if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
-				clientID, CLIENT_NICKNAME, &clientName) != ERROR_ok)
-		return;
-
-	if (currentID == oldChannelID)
-	{
-		notify_leave(clientName);
-	}
-	else if (currentID == newChannelID)
-	{
-		notify_join(clientName);
+		char *clientName;
+		if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
+					clientID, CLIENT_NICKNAME, &clientName) == ERROR_ok)
+		{
+			uint64 currentID;
+			if (current_channel(serverConnectionHandlerID, oldChannelID,
+						&currentID))
+				notify_leave(clientName);
+			if (current_channel(serverConnectionHandlerID, newChannelID,
+						&currentID))
+				notify_join(clientName);
+		}
+		else
+		{
+			ts3Functions.logMessage("Could not get client nickname.",
+					LogLevel_ERROR, ts3plugin_name(),
+					serverConnectionHandlerID);
+		}
 	}
 }
 
@@ -248,48 +236,71 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
 			ts3plugin_name(), serverConnectionHandlerID);
 
 	/* Friend/Foe manager has ignored the message, so ignore here as well. */
-	if (ffIgnored) {
-		// client will ignore message no matter what, rv does not matter
-		return 0;
-	}
+	if (ffIgnored) return 0;
 
+	/**
+	 * Send notification of server/channel/client message.
+	 * Do NOT send message if the sender is the client itself.
+	 */
 	anyID myID;
-    if ((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok)
-			&& fromID == myID) {
-		// do not send notifications on own messages
-        return 0;
-    }
-
-	char *rv;
-	if (targetMode == TextMessageTarget_SERVER &&
-			ts3Functions.getServerVariableAsString(serverConnectionHandlerID,
-				VIRTUALSERVER_NAME, &rv) == ERROR_ok)
+	if (current_client(serverConnectionHandlerID, fromID, &myID))
 	{
-		notify_server_message(rv, fromName, message);
-		ts3Functions.freeMemory(rv);
-	}
-	else if (targetMode == TextMessageTarget_CHANNEL)
-	{
-		uint64 channelID;
-		if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
-					&channelID) == ERROR_ok)
+		switch(targetMode)
 		{
-			unsigned int errcode;
-			if ((errcode = ts3Functions.getChannelVariableAsString(
-						serverConnectionHandlerID, channelID,
-						CHANNEL_NAME, &rv)) == ERROR_ok)
-			{
-				notify_channel_message(rv, fromName, message);
-				ts3Functions.freeMemory(rv);
-			}
+			case TextMessageTarget_SERVER:;
+				char *servername;
+				if (ts3Functions.getServerVariableAsString(
+							serverConnectionHandlerID, VIRTUALSERVER_NAME,
+							&servername)
+						== ERROR_ok)
+				{
+					notify_server_message(servername, fromName, message);
+					ts3Functions.freeMemory(servername);
+				}
+				else
+					ts3Functions.logMessage("Could not get server name.",
+							LogLevel_ERROR, ts3plugin_name(),
+							serverConnectionHandlerID);
+				return 0;
+
+			case TextMessageTarget_CHANNEL:;
+				uint64 channelID;
+				if (ts3Functions.getChannelOfClient(serverConnectionHandlerID,
+							myID, &channelID) == ERROR_ok)
+				{
+					char *channelname;
+					if (ts3Functions.getChannelVariableAsString(
+								serverConnectionHandlerID, channelID,
+								CHANNEL_NAME, &channelname) == ERROR_ok)
+					{
+						notify_channel_message(channelname, fromName, message);
+						ts3Functions.freeMemory(channelname);
+					}
+					else
+						ts3Functions.logMessage("Could not get channel name.",
+								LogLevel_ERROR, ts3plugin_name(),
+								serverConnectionHandlerID);
+				}
+				else
+					ts3Functions.logMessage(
+							"Could not get current channel's ID.",
+							LogLevel_ERROR, ts3plugin_name(),
+							serverConnectionHandlerID);
+				return 0;
+			
+			case TextMessageTarget_CLIENT:;
+				notify_private_message(fromName, message);
+				return 0;
+			
+			default:
+				ts3Functions.logMessage("Unexpected TextMessageTarget.",
+						LogLevel_WARNING, ts3plugin_name(),
+						serverConnectionHandlerID);
+				return 0;
 		}
 	}
-	else if (targetMode == TextMessageTarget_CLIENT)
-	{
-		notify_private_message(fromName, message);
-	}
 
-    return 0; /* 0 = handle normally, 1 = client will ignore the text message */
+	return 0;
 }
 
 void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID,
@@ -325,24 +336,18 @@ void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
 int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
 		anyID fromClientID, const char* pokerName,
 		const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
+	ts3Functions.logMessage("onClientPokeEvent", LogLevel_DEBUG,
+			ts3plugin_name(), serverConnectionHandlerID);
+
 	// Check if the Friend/Foe manager has already blocked this poke
-	if(ffIgnored) {
-		// Client will block anyways, doesn't matter what we return
-		return 0;
-	}
+	if(ffIgnored) return 0;
 
+	/**
+	 * Only poke if the poker is not the client itself.
+	 */
     anyID myID;
-	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
-	{
-		ts3Functions.logMessage("Error querying own client ID.", LogLevel_ERROR,
-				ts3plugin_name(), serverConnectionHandlerID);
-		return 0;
-	}
-
-	if (fromClientID != myID)
-	{
+	if (!current_client(serverConnectionHandlerID, fromClientID, &myID))
 		notify_poke(pokerName, message);
-	}
 
     return 0;
 }
