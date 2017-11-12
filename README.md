@@ -3,13 +3,14 @@
 
 ## Features
 [x] Send notification alerts on messages received.
+[x] Do not show notifications if TeamSpeak window is focused.
 [ ] Send notification alerts on users joining/leaving channel.
 [ ] Send information that can be used to setup display of active/muted microphone.
 [ ] Send notification on edited channel.
 [ ] Show TeamSpeak 3 icon with notification. 
 [ ] Show which channel message is sent to.
 [ ] Show which server message is sent to.
-[ ] Do not show notifications if TeamSpeak window is focused.
+[ ] Show which user joined channel.
 
 ## Requirements
 libnotify
