@@ -315,15 +315,29 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
         return 0;
     }
 
-	if (targetMode == TextMessageTarget_SERVER)
+	char *rv;
+	if (targetMode == TextMessageTarget_SERVER &&
+			ts3Functions.getServerVariableAsString(serverConnectionHandlerID,
+				VIRTUALSERVER_NAME, &rv) == ERROR_ok)
 	{
-		// TODO: Get server name from target.
-		notify_server_message("SERVER", fromName, message);
+		notify_server_message(rv, fromName, message);
+		ts3Functions.freeMemory(rv);
 	}
 	else if (targetMode == TextMessageTarget_CHANNEL)
 	{
-		// TODO: Get channel name from target.
-		notify_channel_message("CHANNEL", fromName, message);
+		uint64 channelID;
+		if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
+					&channelID) == ERROR_ok)
+		{
+			unsigned int errcode;
+			if ((errcode = ts3Functions.getChannelVariableAsString(
+						serverConnectionHandlerID, channelID,
+						CHANNEL_NAME, &rv)) == ERROR_ok)
+			{
+				notify_channel_message(rv, fromName, message);
+				ts3Functions.freeMemory(rv);
+			}
+		}
 	}
 	else if (targetMode == TextMessageTarget_CLIENT)
 	{
