@@ -48,6 +48,18 @@ int current_client(uint64 serverConnectionHandlerID, anyID other,
 int current_channel(uint64 serverConnectionHandlerID, uint64 other,
     uint64 *current);
 
+/**
+ * Send notification of server message.
+ */
+void send_server_message_notification(uint64 serverConnectionHandlerID,
+    const char *fromName, const char *message);
+
+/**
+ * Send notification of channel message.
+ */
+void send_channel_message_notification(uint64 serverConnectionHandlerID,
+    anyID clientID, const char *fromName, const char *message);
+
 /*********************************** Required functions ************************************/
 /*
  * If any of these required functions is not implemented, TS3 will refuse to load the plugin
@@ -248,44 +260,14 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
   {
     switch(targetMode)
     {
-      case TextMessageTarget_SERVER:;
-        char *servername;
-        if (ts3Functions.getServerVariableAsString(
-              serverConnectionHandlerID, VIRTUALSERVER_NAME,
-              &servername) == ERROR_ok)
-        {
-          notify_server_message(servername, fromName, message);
-          ts3Functions.freeMemory(servername);
-        }
-        else
-          ts3Functions.logMessage("Could not get server name.",
-              LogLevel_ERROR, ts3plugin_name(),
-              serverConnectionHandlerID);
+      case TextMessageTarget_SERVER:
+        send_server_message_notification(serverConnectionHandlerID, fromName,
+            message);
         return 0;
 
-      case TextMessageTarget_CHANNEL:;
-        uint64 channelID;
-        if (ts3Functions.getChannelOfClient(serverConnectionHandlerID,
-              myID, &channelID) == ERROR_ok)
-        {
-          char *channelname;
-          if (ts3Functions.getChannelVariableAsString(
-                serverConnectionHandlerID, channelID,
-                CHANNEL_NAME, &channelname) == ERROR_ok)
-          {
-            notify_channel_message(channelname, fromName, message);
-            ts3Functions.freeMemory(channelname);
-          }
-          else
-            ts3Functions.logMessage("Could not get channel name.",
-                LogLevel_ERROR, ts3plugin_name(),
-                serverConnectionHandlerID);
-        }
-        else
-          ts3Functions.logMessage(
-              "Could not get current channel's ID.",
-              LogLevel_ERROR, ts3plugin_name(),
-              serverConnectionHandlerID);
+      case TextMessageTarget_CHANNEL:
+        send_channel_message_notification(serverConnectionHandlerID, myID,
+            fromName, message);
         return 0;
       
       case TextMessageTarget_CLIENT:;
@@ -426,3 +408,43 @@ int current_channel(uint64 serverConnectionHandlerID, uint64 other,
   }
   return other == *current;
 }
+
+void send_server_message_notification(uint64 serverConnectionHandlerID,
+    const char *fromName, const char *message)
+{
+  char *servername;
+  if (ts3Functions.getServerVariableAsString(serverConnectionHandlerID,
+        VIRTUALSERVER_NAME, &servername) == ERROR_ok)
+  {
+    notify_server_message(servername, fromName, message);
+    ts3Functions.freeMemory(servername);
+  }
+  else
+    ts3Functions.logMessage("Could not get server name.", LogLevel_ERROR,
+        ts3plugin_name(), serverConnectionHandlerID);
+}
+
+void send_channel_message_notification(uint64 serverConnectionHandlerID,
+    anyID clientID, const char *fromName, const char *message)
+{
+  uint64 channelID;
+  if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, clientID,
+        &channelID) == ERROR_ok)
+  {
+    char *channelname;
+    if (ts3Functions.getChannelVariableAsString(
+          serverConnectionHandlerID, channelID, CHANNEL_NAME, &channelname)
+        == ERROR_ok)
+    {
+      notify_channel_message(channelname, fromName, message);
+      ts3Functions.freeMemory(channelname);
+    }
+    else
+      ts3Functions.logMessage("Could not get channel name.", LogLevel_ERROR,
+          ts3plugin_name(), serverConnectionHandlerID);
+    }
+  else
+    ts3Functions.logMessage("Could not get current channel's ID.",
+        LogLevel_ERROR, ts3plugin_name(), serverConnectionHandlerID);
+}
+
