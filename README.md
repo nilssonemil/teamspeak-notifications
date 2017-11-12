@@ -12,6 +12,7 @@
 [ ] Send information that can be used to setup display of active/muted microphone.
 [ ] Show TeamSpeak 3 icon with notification. 
 [ ] Remove unnecessary code from plugin template.
+[ ] Read config of which notification should be displayed from file.
 
 ## Requirements
 - libnotify
