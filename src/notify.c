@@ -77,17 +77,30 @@ void notify_channel_message(const char *channel, const char *sender,
 
 void notify_private_message(const char *sender, const char *message)
 {
-  notify(sender, message, NORMAL);
+  const char *separator = ": ";
+  char body[strlen(sender) + strlen(separator) + strlen(message) + 1];
+  strcpy(body, sender);
+  strcat(body, separator);
+  strcat(body, message);
+  notify("PM:", body, CRITICAL);
 }
 
 void notify_join(const char *client)
 {
-  notify(client, "Joined the channel.", NORMAL);
+  const char *suffix = " joined the channel.";
+  char summary[strlen(client) + strlen(suffix) + 1];
+  strcpy(summary, client);
+  strcat(summary, suffix);
+  notify(summary, "", NORMAL);
 }
 
 void notify_leave(const char *client)
 {
-  notify(client, "Left the channel.", NORMAL);
+  const char *suffix = " left the channel.";
+  char summary[strlen(client) + strlen(suffix) + 1];
+  strcpy(summary, client);
+  strcat(summary, suffix);
+  notify(summary, "", NORMAL);
 }
 
 void notify_poke(const char *poker, const char *message)
@@ -96,15 +109,15 @@ void notify_poke(const char *poker, const char *message)
   char summary[strlen(poker) + strlen(suffix) + 1];
   strcpy(summary, poker);
   strcat(summary, suffix);
-
   notify(summary, message, CRITICAL);
 }
 
 void notify_channel_edited(const char *editer)
 {
-  if (editer == NULL)
-    notify("Your channel was edited!", "", LOW);
-  else
-    notify(editer, "Edited your channel!", LOW);
+  const char *suffix = " edited your channel.";
+  char summary[strlen(editer) + strlen(suffix) + 1];
+  strcpy(summary, editer);
+  strcat(summary, suffix);
+  notify(summary, "", LOW);
 }
 
