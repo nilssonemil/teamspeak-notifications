@@ -13,8 +13,8 @@
 [ ] Show which user joined channel.
 
 ## Requirements
-libnotify
-libxdo
+- libnotify
+- libxdo
 
 ## Installation
 Compile the plugin using `make all`.
