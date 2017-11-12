@@ -11,11 +11,11 @@ TeamSpeak 3 plugin for displaying notifications on Linux upon TeamSpeak events.
 [x] Send notifications on poke.
 [x] Send notification alerts on users joining/leaving channel.
 [x] Send notification on edited channel.
+[x] Remove unnecessary code from plugin template.
 [ ] Change styling of notifications depending on type.
 [ ] Send information that can be used to setup display of active/muted
 microphone.
 [ ] Show TeamSpeak 3 icon with notification. 
-[ ] Remove unnecessary code from plugin template.
 [ ] Read config of which notification should be displayed from file.
 
 ## Requirements
