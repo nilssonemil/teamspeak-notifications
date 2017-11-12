@@ -32,6 +32,22 @@ static struct TS3Functions ts3Functions;
 
 static char* pluginID = NULL;
 
+/*********************************** Local functions *************************/
+
+/**
+ * Return 1 if the client given is the same as the user client, otherwise 0.
+ * Will return -1 if an error occured.
+ */
+int current_client(uint64 serverConnectionHandlerID, anyID other,
+		anyID *client);
+
+/**
+ * Return 1 if the channel is the user's current channel, otherwise 0.
+ * Will return -1 if an error occured.
+ */
+int current_channel(uint64 serverConnectionHandlerID, uint64 other,
+		uint64 *current);
+
 /*********************************** Required functions ************************************/
 /*
  * If any of these required functions is not implemented, TS3 will refuse to load the plugin
@@ -375,3 +391,33 @@ void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID,
 /* Client UI callbacks */
 /* ---- */
 
+/*********************************** Local functions *************************/
+
+int current_client(uint64 serverConnectionHandlerID, anyID other,
+		anyID *client)
+{
+	if (ts3Functions.getClientID(serverConnectionHandlerID, client) == ERROR_ok)
+		return other == *client;
+
+	return -1;
+}
+
+int current_channel(uint64 serverConnectionHandlerID, uint64 other,
+		uint64 *current)
+{
+	anyID myID;
+	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
+	{
+		ts3Functions.logMessage("Could not get client ID.", LogLevel_ERROR,
+				ts3plugin_name(), serverConnectionHandlerID);
+		return  -1;
+	}
+	if (ts3Functions.getChannelOfClient(serverConnectionHandlerID, myID,
+				current) != ERROR_ok)
+	{
+		ts3Functions.logMessage("Could not get client's channel's ID.",
+				LogLevel_DEBUG, ts3plugin_name(), serverConnectionHandlerID);
+		return -1;
+	}
+	return other == *current;
+}
