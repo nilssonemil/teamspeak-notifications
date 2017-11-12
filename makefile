@@ -7,7 +7,7 @@ all: $(PLUGIN)
 	cp bin/$(PLUGIN) $(TS3PLUGINS)
 
 $(PLUGIN): plugin.o notify.o
-	$(CC) -o bin/$(PLUGIN) -shared build/plugin.o build/notify.o
+	$(CC) -o bin/$(PLUGIN) -shared build/plugin.o build/notify.o /usr/lib/libxdo.so
 
 
 plugin.o: src/plugin.c src/plugin.h src/notify.h
