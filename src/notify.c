@@ -36,8 +36,7 @@ int teamspeak_focused()
 void notify(const char *summary, const char *body, urgency_t urgency)
 {
 	// do not display notifcation if teamspeak is focused
-	if (teamspeak_focused() == 1)
-		return;
+	if (teamspeak_focused() == 1) return;
 
 	int extra = 15; // for use of spaces/formattign
 	char notify[strlen(COMMAND_NOTIFY) + strlen(summary) + strlen(APP_NAME) + 
