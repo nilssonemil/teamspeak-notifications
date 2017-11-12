@@ -1,6 +1,9 @@
 #ifndef NOTIFY_H
 #define NOTIFY_H
 
+/**
+ * Defines the urgency levels of notify-send.
+ */
 typedef enum {LOW, NORMAL, CRITICAL} urgency_t;
 
 /**
