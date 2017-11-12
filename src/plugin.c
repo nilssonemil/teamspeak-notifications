@@ -176,17 +176,17 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
   anyID myID;
   if (current_client(serverConnectionHandlerID, clientID, &myID) != 1)
   {
-    char *clientName;
+    char *clientname;
     if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
-          clientID, CLIENT_NICKNAME, &clientName) == ERROR_ok)
+          clientID, CLIENT_NICKNAME, &clientname) == ERROR_ok)
     {
       uint64 currentID;
       if (current_channel(serverConnectionHandlerID, oldChannelID,
-        notify_leave(clientName);
             &currentID) == 1)
+        notify_leave(clientname, NULL);
       if (current_channel(serverConnectionHandlerID, newChannelID,
-        notify_join(clientName);
             &currentID) == 1)
+        notify_join(clientname, NULL);
     }
     else
       ts3Functions.logMessage("Could not get client nickname.",
@@ -205,7 +205,47 @@ void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID,
     anyID clientID, uint64 oldChannelID, uint64 newChannelID,
     int visibility, anyID moverID, const char* moverName,
     const char* moverUniqueIdentifier, const char* moveMessage) {
-  // TODO: Client was moved, notify!
+  ts3Functions.logMessage("onClientMoveMovedEvent", LogLevel_DEBUG,
+      ts3plugin_name(), serverConnectionHandlerID);
+
+  /**
+   * If the client itself was moved, show message to indicate that.
+   */
+  anyID myID;
+  int res;
+  if ((res = current_client(serverConnectionHandlerID, moverID, &myID)) == 1
+      && clientID != myID)
+  {
+    char *channelname;
+    if (ts3Functions.getChannelVariableAsString(serverConnectionHandlerID,
+          newChannelID, CHANNEL_NAME, &channelname) == ERROR_ok)
+      notify_move(channelname, moverName);
+    else
+      ts3Functions.logMessage("Could not get channel name.",
+          LogLevel_ERROR, ts3plugin_name(), serverConnectionHandlerID);
+  }
+  else if (res == 0) // client is not current client
+  {
+    /**
+     * Send message that another client was moved to/from your channel.
+     */
+    char *clientname;
+    if (ts3Functions.getClientVariableAsString(serverConnectionHandlerID,
+          clientID, CLIENT_NICKNAME, &clientname) == ERROR_ok)
+    {
+      uint64 currentID;
+      if (current_channel(serverConnectionHandlerID, oldChannelID,
+            &currentID) == 1)
+        notify_leave(clientname, moverName);
+      if (current_channel(serverConnectionHandlerID, newChannelID,
+            &currentID) == 1)
+        notify_join(clientname, moverName);
+    }
+    else
+      ts3Functions.logMessage("Could not get client nickname.",
+          LogLevel_ERROR, ts3plugin_name(),
+          serverConnectionHandlerID);
+  }
 }
 
 void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID,

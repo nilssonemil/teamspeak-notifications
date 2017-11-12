@@ -12,8 +12,9 @@ void notify_server_message(const char *server, const char *sender,
 void notify_channel_message(const char *channel, const char *sender,
     const char *message);
 void notify_private_message(const char *sender, const char *message);
-void notify_join(const char *client);
-void notify_leave(const char *client);
+void notify_join(const char *client, const char* mover);
+void notify_leave(const char *client, const char* mover);
+void notify_move(const char *channel, const char* mover);
 void notify_poke(const char *poker, const char *message);
 void notify_channel_edited(const char *editer);
 

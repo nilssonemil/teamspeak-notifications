@@ -85,22 +85,67 @@ void notify_private_message(const char *sender, const char *message)
   notify("PM:", body, CRITICAL);
 }
 
-void notify_join(const char *client)
+void notify_join(const char *client, const char *mover)
 {
   const char *suffix = " joined the channel.";
   char summary[strlen(client) + strlen(suffix) + 1];
   strcpy(summary, client);
   strcat(summary, suffix);
-  notify(summary, "", NORMAL);
+
+  if (mover == NULL)
+    notify(summary, "", NORMAL);
+  else
+  {
+    const char *bprefix = "Was moved by ";
+    const char *bsuffix = ".";
+    char body[strlen(bprefix) + strlen(mover) + strlen(bsuffix) + 1];
+    strcpy(body, bprefix);
+    strcat(body, mover);
+    strcat(body, bsuffix);
+
+    notify(summary, body, NORMAL);
+  }
 }
 
-void notify_leave(const char *client)
+void notify_leave(const char *client, const char *mover)
 {
   const char *suffix = " left the channel.";
   char summary[strlen(client) + strlen(suffix) + 1];
   strcpy(summary, client);
   strcat(summary, suffix);
-  notify(summary, "", NORMAL);
+
+  if (mover == NULL)
+    notify(summary, "", NORMAL);
+  else
+  {
+    const char *bprefix = "Was moved by ";
+    const char *bsuffix = ".";
+    char body[strlen(bprefix) + strlen(mover) + strlen(bsuffix) + 1];
+    strcpy(body, bprefix);
+    strcat(body, mover);
+    strcat(body, bsuffix);
+
+    notify(summary, body, NORMAL);
+  }
+}
+
+void notify_move(const char *channel, const char *mover)
+{
+  const char *sprefix = "You left ";
+  const char *ssuffix = ".";
+  char summary[strlen(sprefix) + strlen(channel) + strlen(ssuffix) + 1];
+  strcpy(summary, sprefix);
+  strcat(summary, channel);
+  strcat(summary, ssuffix);
+
+  const char *bprefix = "You were moved by ";
+  const char *bsuffix = "!";
+  char body[strlen(bprefix) + strlen(mover) + strlen(bsuffix) + 1];
+  strcpy(body, bprefix);
+  strcat(body, mover);
+  strcat(body, bsuffix);
+
+  notify(summary, body, CRITICAL);
 }
 
 void notify_poke(const char *poker, const char *message)
