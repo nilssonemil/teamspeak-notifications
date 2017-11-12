@@ -41,9 +41,9 @@ void notify(const char *summary, const char *body, urgency_t urgency)
   // do not display notifcation if teamspeak is focused
   if (focused() == 1) return;
 
-  int extra = 15; // for use of spaces/formattign
+  int formatting = 15;
   char notify[strlen(COMMAND_NOTIFY) + strlen(summary) + strlen(APP_NAME) + 
-    strlen(body) + extra];
+    strlen(body) + formatting];
 
   snprintf(notify, sizeof notify, "%s \"%s\" -a \"%s\" \"%s\"",
       COMMAND_NOTIFY, summary, APP_NAME, body);
