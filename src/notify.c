@@ -6,7 +6,7 @@
 #include "notify.h"
 
 static const char* COMMAND_NOTIFY = "notify-send";
-static const char* APP_NAME = "TeaamSpeak 3";
+static const char* APP_NAME = "TeamSpeak 3";
 
 /**
  * Return 1 if the TeamSpeak window is focused, otherwise 0.
