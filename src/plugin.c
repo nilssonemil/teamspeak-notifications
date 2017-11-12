@@ -72,7 +72,8 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs) {
  * If the function returns 1 on failure, the plugin will be unloaded again.
  */
 int ts3plugin_init() {
-    return 0;  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
+    return 0;
+	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
 	 * the plugin again, avoiding the show another dialog by the client telling the user the plugin failed to load.
 	 * For normal case, if a plugin really failed to load because of an error, the correct return value is 1. */
@@ -93,44 +94,15 @@ void ts3plugin_shutdown() {
 	}
 }
 
-/****************************** Optional functions ********************************/
+/**************************** Optional functions ******************************/
 /*
- * Following functions are optional, if not needed you don't need to implement them.
+ * Following functions are optional, if not needed you don't need to implement
+ * them.
  */
 
-/* Tell client if plugin offers a configuration window. If this function is not implemented, it's an assumed "does not offer" (PLUGIN_OFFERS_NO_CONFIGURE). */
-int ts3plugin_offersConfigure() {
-	/*
-	 * Return values:
-	 * PLUGIN_OFFERS_NO_CONFIGURE         - Plugin does not implement ts3plugin_configure
-	 * PLUGIN_OFFERS_CONFIGURE_NEW_THREAD - Plugin does implement ts3plugin_configure and requests to run this function in an own thread
-	 * PLUGIN_OFFERS_CONFIGURE_QT_THREAD  - Plugin does implement ts3plugin_configure and requests to run this function in the Qt GUI thread
-	 */
-	return PLUGIN_OFFERS_NO_CONFIGURE;  /* In this case ts3plugin_configure does not need to be implemented */
-}
-
-/* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
-void ts3plugin_configure(void* handle, void* qParentWidget) {}
-
 /*
- * If the plugin wants to use error return codes, plugin commands, hotkeys or menu items, it needs to register a command ID. This function will be
- * automatically called after the plugin was initialized. This function is optional. If you don't use these features, this function can be omitted.
- * Note the passed pluginID parameter is no longer valid after calling this function, so you must copy it and store it in the plugin.
- */
-void ts3plugin_registerPluginID(const char* id) {
-	const size_t sz = strlen(id) + 1;
-	pluginID = (char*)malloc(sz * sizeof(char));
-	_strcpy(pluginID, sz, id);  /* The id buffer will invalidate after exiting this function */
-}
-
-/* Plugin command keyword. Return NULL or "" if not used. */
-const char* ts3plugin_commandKeyword() {
-	return NULL;
-}
-
-/*
- * Plugin requests to be always automatically loaded by the TeamSpeak 3 client unless
- * the user manually disabled it in the plugin dialog.
+ * Plugin requests to be always automatically loaded by the TeamSpeak 3 client 
+ * unless the user manually disabled it in the plugin dialog.
  * This function is optional. If missing, no autoload is assumed.
  */
 int ts3plugin_requestAutoload() {
