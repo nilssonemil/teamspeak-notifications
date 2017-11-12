@@ -8,7 +8,10 @@
 static const char* COMMAND_NOTIFY = "notify-send";
 static const char* APP_NAME = "TeaamSpeak 3";
 
-int teamspeak_focused()
+/**
+ * Return 1 if the TeamSpeak window is focused, otherwise 0.
+ */
+int focused()
 {
 	/**
 	 * See man getpid.
@@ -36,7 +39,7 @@ int teamspeak_focused()
 void notify(const char *summary, const char *body, urgency_t urgency)
 {
 	// do not display notifcation if teamspeak is focused
-	if (teamspeak_focused() == 1) return;
+	if (focused() == 1) return;
 
 	int extra = 15; // for use of spaces/formattign
 	char notify[strlen(COMMAND_NOTIFY) + strlen(summary) + strlen(APP_NAME) + 
