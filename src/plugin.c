@@ -278,17 +278,32 @@ void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
 	// TODO: Client banned from server, notify!
 }
 
+/**
+ * Return 0 when client should handle normally, 1 if client should ignore.
+ */
 int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
 		anyID fromClientID, const char* pokerName,
 		const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
-    anyID myID;
 	// Check if the Friend/Foe manager has already blocked this poke
 	if(ffIgnored) {
-		return 0;  /* Client will block anyways, doesn't matter what we return */
+		// Client will block anyways, doesn't matter what we return
+		return 0;
 	}
 
+    anyID myID;
+	if (ts3Functions.getClientID(serverConnectionHandlerID, &myID) != ERROR_ok)
+	{
+		ts3Functions.logMessage("Error querying own client ID.", LogLevel_ERROR,
+				ts3plugin_name(), serverConnectionHandlerID);
+		return 0;
+	}
 
-    return 0;  /* 0 = handle normally, 1 = client will ignore the poke */
+	if (fromClientID != myID)
+	{
+		notify_poke(pokerName, message);
+	}
+
+    return 0;
 }
 
 void ts3plugin_onFileListEvent(uint64 serverConnectionHandlerID,
