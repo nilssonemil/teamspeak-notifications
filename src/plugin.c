@@ -65,7 +65,7 @@ void send_channel_message_notification(uint64 serverConnectionHandlerID,
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name() {
-  return "teamspeak-notifications";
+  return "TeamSpeak Notifications";
 }
 
 /* Plugin version */
