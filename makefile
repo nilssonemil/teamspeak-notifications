@@ -6,6 +6,8 @@ TS3PLUGINS = $(HOME)/.ts3client/plugins/
 default: all clean
 
 all: $(PLUGIN)
+
+install: $(PLUGIN)
 	@cp bin/$(PLUGIN) $(TS3PLUGINS)
 
 $(PLUGIN): plugin.o notify.o
