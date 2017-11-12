@@ -51,46 +51,29 @@ void notify(const char *summary, const char *body, urgency_t urgency)
 void notify_server_message(const char *server, const char *sender,
 		const char *message)
 {
-	const char *server_suffix = " MESSAGE";
-	char summary[strlen(server) + strlen(server_suffix) + 1];
-	strcpy(summary, server);
-	strcat(summary, server_suffix);
-
 	const char *separator = ": ";
 	char body[strlen(sender) + strlen(separator) + strlen(message) + 1];
 	strcpy(body, sender);
 	strcat(body, separator);
 	strcat(body, message);
 
-	notify(summary, body, LOW);
+	notify(server, body, LOW);
 }
 
 void notify_channel_message(const char *channel, const char *sender,
 		const char *message)
 {
-	const char *channel_suffix = " MESSAGE";
-	char summary[strlen(channel) + strlen(channel_suffix) + 1];
-	strcpy(summary, channel);
-	strcat(summary, channel_suffix);
-
 	const char *separator = ": ";
 	char body[strlen(sender) + strlen(separator) + strlen(message) + 1];
 	strcpy(body, sender);
 	strcat(body, separator);
 	strcat(body, message);
 
-	notify(summary, body, LOW);
+	notify(channel, body, LOW);
 }
 
 void notify_private_message(const char *sender, const char *message)
 {
-	const char *summary = "PRIVATE MESSAGE";
-	const char *separator = ": ";
-	char body[strlen(sender) + strlen(separator) + strlen(message) + 1];
-	strcpy(body, sender);
-	strcat(body, separator);
-	strcat(body, message);
-
-	notify(summary, body, NORMAL);
+	notify(sender, message, NORMAL);
 }
 
