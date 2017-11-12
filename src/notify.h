@@ -28,6 +28,7 @@ void notify_leave(const char *client);
 
 void notify_poke(const char *poker, const char *message);
 
+void notify_channel_edited(const char *editer);
 
 #endif
 

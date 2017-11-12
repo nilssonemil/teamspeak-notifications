@@ -100,3 +100,11 @@ void notify_poke(const char *poker, const char *message)
 	notify(summary, message, CRITICAL);
 }
 
+void notify_channel_edited(const char *editer)
+{
+	if (editer == NULL)
+		notify("Your channel was edited!", "", LOW);
+	else
+		notify(editer, "Edited your channel!", LOW);
+}
+
