@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2008-2017 TeamSpeak Systems GmbH
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,7 +18,8 @@
 
 static struct TS3Functions ts3Functions;
 
-#define _strcpy(dest, destSize, src) { strncpy(dest, src, destSize-1); (dest)[destSize-1] = '\0'; }
+#define _strcpy(dest, destSize, src) { strncpy(dest, src, destSize-1); \
+  (dest)[destSize-1] = '\0'; }
 
 #define PLUGIN_API_VERSION 22
 
@@ -32,7 +32,7 @@ static struct TS3Functions ts3Functions;
 
 static char* pluginID = NULL;
 
-/*********************************** Local functions *************************/
+/****** Local Function Prototypes ******/
 
 /**
  * Return 1 if the client given is the same as the user client, otherwise 0.
@@ -60,10 +60,8 @@ void send_server_message_notification(uint64 serverConnectionHandlerID,
 void send_channel_message_notification(uint64 serverConnectionHandlerID,
     anyID clientID, const char *fromName, const char *message);
 
-/*********************************** Required functions ************************************/
-/*
- * If any of these required functions is not implemented, TS3 will refuse to load the plugin
- */
+
+/****** Required Functions ******/
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name() {
@@ -72,48 +70,52 @@ const char* ts3plugin_name() {
 
 /* Plugin version */
 const char* ts3plugin_version() {
-    return "0.4.0";
+  return "0.4.0";
 }
 
-/* Plugin API version. Must be the same as the clients API major version, else the plugin fails to load. */
+/* Plugin API version. Must be the same as the clients API major version, else
+ * the plugin fails to load. */
 int ts3plugin_apiVersion() {
   return PLUGIN_API_VERSION;
 }
 
 /* Plugin author */
 const char* ts3plugin_author() {
-    return "Emil Nilsson <emil.nilsson@protonmail.com>";
+  return "Emil Nilsson <emil.nilsson@protonmail.com>";
 }
 
 /* Plugin description */
 const char* ts3plugin_description() {
-    return "This plugin sends notifications on TeamSpeak events via libnotify.";
+  return "This plugin sends notifications on TeamSpeak events via libnotify.";
 }
 
 /* Set TeamSpeak 3 callback functions */
 void ts3plugin_setFunctionPointers(const struct TS3Functions funcs) {
-    ts3Functions = funcs;
+  ts3Functions = funcs;
 }
 
-/*
- * Custom code called right after loading the plugin. Returns 0 on success, 1 on failure.
- * If the function returns 1 on failure, the plugin will be unloaded again.
+/**
+ * Custom code called right after loading the plugin. Returns 0 on success, 1 on
+ * failure. If the function returns 1 on failure, the plugin will be unloaded
+ * again.
  */
 int ts3plugin_init() {
   notify(ts3plugin_name(), "Hello, World!", 0);
-    return 0;
-  /* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
-  /* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
-   * the plugin again, avoiding the show another dialog by the client telling the user the plugin failed to load.
-   * For normal case, if a plugin really failed to load because of an error, the correct return value is 1. */
+  /**
+   * Success -> 0
+   * Failure -> 1
+   * Failure -> -2 (wihotut failed to load warning)
+   */
+  return 0;
 }
 
 /* Custom code called right before the plugin is unloaded */
 void ts3plugin_shutdown() {
-  /*
-   * Note:
-   * If your plugin implements a settings dialog, it must be closed and deleted here, else the
-   * TeamSpeak client will most likely crash (DLL removed but dialog from DLL code still open).
+  /**
+   * NOTE:
+   * If your plugin implements a settings dialog, it must be closed and deleted
+   * here, else the TeamSpeak client will most likely crash (DLL removed but
+   * dialog from DLL code still open).
    */
 
   /* Free pluginID if we registered it */
@@ -123,11 +125,7 @@ void ts3plugin_shutdown() {
   }
 }
 
-/**************************** Optional functions ******************************/
-/*
- * Following functions are optional, if not needed you don't need to implement
- * them.
- */
+/****** Optional Functions ******/
 
 /*
  * Plugin requests to be always automatically loaded by the TeamSpeak 3 client 
@@ -139,13 +137,7 @@ int ts3plugin_requestAutoload() {
   return 1;
 }
 
-/************************** TeamSpeak callbacks ***************************/
-/*
- * Following functions are optional, feel free to remove unused callbacks.
- * See the clientlib documentation for details on each function.
- */
-
-/* Clientlib */
+/****** TeamSpeak Callbacks ******/
 
 void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID,
     int newStatus, unsigned int errorNumber) {
@@ -302,8 +294,6 @@ void ts3plugin_onChannelPasswordChangedEvent(uint64 serverConnectionHandlerID,
   // TODO: Password changed, notify!
 }
 
-/* Clientlib rare */
-
 void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
     anyID clientID, uint64 oldChannelID, uint64 newChannelID,
     int visibility, anyID kickerID, const char* kickerName,
@@ -312,9 +302,6 @@ void ts3plugin_onClientBanFromServerEvent(uint64 serverConnectionHandlerID,
   // TODO: Client banned from server, notify!
 }
 
-/**
- * Return 0 when client should handle normally, 1 if client should ignore.
- */
 int ts3plugin_onClientPokeEvent(uint64 serverConnectionHandlerID,
     anyID fromClientID, const char* pokerName,
     const char* pokerUniqueIdentity, const char* message, int ffIgnored) {
@@ -375,10 +362,7 @@ void ts3plugin_onClientChatComposingEvent(uint64 serverConnectionHandlerID,
   // symbol in status bar?
 }
 
-/* Client UI callbacks */
-/* ---- */
-
-/*********************************** Local functions *************************/
+/****** Local Functions ******/
 
 int current_client(uint64 serverConnectionHandlerID, anyID other,
     anyID *client)
