@@ -1,9 +1,9 @@
-#include "notify.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <xdo.h>
+#include "notify.h"
 
 static const char* COMMAND_NOTIFY = "notify-send";
 static const char* APP_NAME = "TeaamSpeak 3";
