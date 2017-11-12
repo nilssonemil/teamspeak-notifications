@@ -162,6 +162,9 @@ void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID,
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
 		anyID clientID, uint64 oldChannelID, uint64 newChannelID,
 		int visibility, const char* moveMessage) {
+	ts3Functions.logMessage("onClientMoveEvent", LogLevel_DEBUG,
+			ts3plugin_name(), serverConnectionHandlerID);
+
 	anyID myID;
 	if ((ts3Functions.getClientID(serverConnectionHandlerID, &myID) == ERROR_ok)
 			&& clientID == myID)
@@ -225,6 +228,9 @@ void ts3plugin_onServerStopEvent(uint64 serverConnectionHandlerID,
 int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID,
 		anyID targetMode, anyID toID, anyID fromID, const char* fromName,
 		const char* fromUniqueIdentifier, const char* message, int ffIgnored) {
+	ts3Functions.logMessage("onTextMessageEvent", LogLevel_DEBUG,
+			ts3plugin_name(), serverConnectionHandlerID);
+
 	/* Friend/Foe manager has ignored the message, so ignore here as well. */
 	if (ffIgnored) {
 		// client will ignore message no matter what, rv does not matter
