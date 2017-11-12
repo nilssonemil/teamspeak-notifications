@@ -13,6 +13,7 @@
 
 ## Requirements
 libnotify
+libxdo
 
 ## Installation
 Compile the plugin using `make all`.
