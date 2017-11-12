@@ -1,10 +1,6 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Required functions */
 const char* ts3plugin_name();
 const char* ts3plugin_version();
@@ -53,8 +49,5 @@ const char* ts3plugin_keyDeviceName(const char* keyIdentifier);
 const char* ts3plugin_displayKeyText(const char* keyIdentifier);
 const char* ts3plugin_keyPrefix();
 
-#ifdef __cplusplus
-}
 #endif
 
-#endif
