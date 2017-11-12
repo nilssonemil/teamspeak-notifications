@@ -90,3 +90,13 @@ void notify_leave(const char *client)
 	notify(client, "Left the channel.", NORMAL);
 }
 
+void notify_poke(const char *poker, const char *message)
+{
+	const char *suffix = " poked you!";
+	char summary[strlen(poker) + strlen(suffix) + 1];
+	strcpy(summary, poker);
+	strcat(summary, suffix);
+
+	notify(summary, message, CRITICAL);
+}
+
