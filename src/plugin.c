@@ -59,7 +59,7 @@ const char* ts3plugin_author() {
 
 /* Plugin description */
 const char* ts3plugin_description() {
-    return "This plugin sends notifications on teamspeak events via libnotify.";
+    return "This plugin sends notifications on TeamSpeak events via libnotify.";
 }
 
 /* Set TeamSpeak 3 callback functions */
@@ -146,6 +146,7 @@ int ts3plugin_requestAutoload() {
 /* Clientlib */
 
 void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID, int newStatus, unsigned int errorNumber) {
+	// TODO: Keep track of lost connection?
 }
 
 void ts3plugin_onUpdateChannelEvent(uint64 serverConnectionHandlerID, uint64 channelID) {
@@ -158,18 +159,23 @@ void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clien
 }
 
 void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* moveMessage) {
+	// NOTE: Client moved
 }
 
 void ts3plugin_onClientMoveTimeoutEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, const char* timeoutMessage) {
+	// NOTE: Client lost connection
 }
 
 void ts3plugin_onClientMoveMovedEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID moverID, const char* moverName, const char* moverUniqueIdentifier, const char* moveMessage) {
+	// NOTE: Client was moved
 }
 
 void ts3plugin_onClientKickFromChannelEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, const char* kickMessage) {
+	// NOTE: Client was kicked from channel
 }
 
 void ts3plugin_onClientKickFromServerEvent(uint64 serverConnectionHandlerID, anyID clientID, uint64 oldChannelID, uint64 newChannelID, int visibility, anyID kickerID, const char* kickerName, const char* kickerUniqueIdentifier, const char* kickMessage) {
+	// NOTE: Client was kicked from server
 }
 
 int ts3plugin_onServerErrorEvent(uint64 serverConnectionHandlerID, const char* errorMessage, unsigned int error, const char* returnCode, const char* extraMessage) {
@@ -183,7 +189,6 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
 	/* Friend/Foe manager has ignored the message, so ignore here as well. */
 	if(ffIgnored) {
 		return 0; /* Client will ignore the message anyways, so return value here doesn't matter */
-	
 	}
 
 	anyID myID;
@@ -221,7 +226,7 @@ int ts3plugin_onTextMessageEvent(uint64 serverConnectionHandlerID, anyID targetM
 		notify_private_message(fromName, message);
 	}
 
-    return 0;  /* 0 = handle normally, 1 = client will ignore the text message */
+    return 0; /* 0 = handle normally, 1 = client will ignore the text message */
 }
 
 void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID, int status, int isReceivedWhisper, anyID clientID) {
@@ -229,9 +234,9 @@ void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID, int sta
 	char name[512];
 	if(ts3Functions.getClientDisplayName(serverConnectionHandlerID, clientID, name, 512) == ERROR_ok) {
 		if(status == STATUS_TALKING) {
-			printf("--> %s starts talking\n", name);
+			//printf("--> %s starts talking\n", name);
 		} else {
-			printf("--> %s stops talking\n", name);
+			//printf("--> %s stops talking\n", name);
 		}
 	}
 }
