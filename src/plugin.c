@@ -189,11 +189,9 @@ void ts3plugin_onClientMoveEvent(uint64 serverConnectionHandlerID,
         notify_join(clientName);
     }
     else
-    {
       ts3Functions.logMessage("Could not get client nickname.",
           LogLevel_ERROR, ts3plugin_name(),
           serverConnectionHandlerID);
-    }
   }
 }
 
