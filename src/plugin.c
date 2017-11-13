@@ -151,9 +151,8 @@ void ts3plugin_onUpdateChannelEditedEvent(uint64 serverConnectionHandlerID,
    */
   anyID myID;
   uint64 currentID;
-  if (current_client(serverConnectionHandlerID, invokerID, &myID) != 1 ||
-      (current_channel(serverConnectionHandlerID, channelID,
-               &currentID) == 1))
+  if (current_client(serverConnectionHandlerID, invokerID, &myID) != 1 &&
+      (current_channel(serverConnectionHandlerID, channelID, &currentID) == 1))
     notify_channel_edited(invokerName);
 }
 
