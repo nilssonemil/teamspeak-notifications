@@ -13,5 +13,5 @@ microphone.
 - [ ] Show TeamSpeak 3 icon with notification. 
 - [ ] Read config of which notification should be displayed from file.
 - [ ] Send message from outside of teamspeak.
-
+- [ ] Toggle notifications on/off.
 
