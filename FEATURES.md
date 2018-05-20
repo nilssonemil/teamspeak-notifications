@@ -8,10 +8,11 @@
 - [x] Send notification on edited channel.
 - [x] Remove unnecessary code from plugin template.
 - [x] Change styling of notifications depending on type.
+- [x] Read configuration from file on plugin initialization.
+- [ ] Read config of which notification should be displayed from file.
 - [ ] Send information that can be used to setup display of active/muted
 microphone.
 - [ ] Show TeamSpeak 3 icon with notification. 
-- [ ] Read config of which notification should be displayed from file.
 - [ ] Send message from outside of teamspeak.
 - [ ] Toggle notifications on/off.
 

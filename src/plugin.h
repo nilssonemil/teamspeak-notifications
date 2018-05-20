@@ -1,6 +1,8 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
+struct Conf conf;
+
 /* Required functions */
 const char* ts3plugin_name();
 const char* ts3plugin_version();

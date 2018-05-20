@@ -9,6 +9,7 @@
 #include "teamspeak/clientlib_publicdefinitions.h"
 #include "ts3_functions.h"
 #include "plugin.h"
+#include "config.h"
 #include "notify.h"
 
 static struct TS3Functions ts3Functions;
@@ -26,6 +27,8 @@ static struct TS3Functions ts3Functions;
 #define RETURNCODE_BUFSIZE 128
 
 static char* pluginID = NULL;
+
+struct Conf conf;
 
 /****** Local Function Prototypes ******/
 
@@ -55,6 +58,12 @@ void send_server_message_notification(uint64 serverConnectionHandlerID,
 void send_channel_message_notification(uint64 serverConnectionHandlerID,
     anyID clientID, const char *fromName, const char *message);
 
+/**
+ * Show a welcome message to the user.
+ * Will not show any message if the config.show_welcome is set to 0.
+ */
+void show_welcome_message();
+
 
 /****** Required Functions ******/
 
@@ -65,7 +74,7 @@ const char* ts3plugin_name() {
 
 /* Plugin version */
 const char* ts3plugin_version() {
-  return "0.4.0";
+  return "0.5.0";
 }
 
 /* Plugin API version. Must be the same as the clients API major version, else
@@ -95,12 +104,11 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs) {
  * again.
  */
 int ts3plugin_init() {
-  notify(ts3plugin_name(), "Hello, World!", 0);
-  /**
-   * Success -> 0
-   * Failure -> 1
-   * Failure -> -2 (wihotut failed to load warning)
-   */
+  // try to load the configuration
+  if (init_config(&conf) == -1)
+    return 1;
+
+  show_welcome_message();
   return 0;
 }
 
@@ -462,5 +470,11 @@ void send_channel_message_notification(uint64 serverConnectionHandlerID,
   else
     ts3Functions.logMessage("Could not get current channel's ID.",
         LogLevel_ERROR, ts3plugin_name(), serverConnectionHandlerID);
+}
+
+void show_welcome_message()
+{
+  if (conf.show_welcome == 1)
+    notify(ts3plugin_name(), "Hello, World!", 0);
 }
 
